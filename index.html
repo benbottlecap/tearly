@@ -707,7 +707,7 @@ input[type="search"]:focus-visible, input[type="email"]:focus-visible, input[typ
     const email = $('auth-email').value.trim(), password = $('auth-pass').value;
     if (!email || password.length < 8) { say('auth-msg', 'Enter your email and a password of 8 or more characters.'); return; }
     say('auth-msg', '');
-    const { data, error } = signUp ? await sb.auth.signUp({ email, password }) : await sb.auth.signInWithPassword({ email, password });
+    const { data, error } = signUp ? await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + location.pathname } }) : await sb.auth.signInWithPassword({ email, password });
     if (error) say('auth-msg', error.message === 'Invalid login credentials' ? 'That email and password do not match. New here? Tap “Create a new account”.' : error.message);
     else if (signUp && !data.session) say('auth-msg', 'Almost there. Open the confirmation email we just sent, then come back and sign in.');
   }
