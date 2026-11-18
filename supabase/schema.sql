@@ -53,12 +53,16 @@ create table public.hugs (
 
 create function public.are_friends(a uuid, b uuid) returns boolean
 language sql stable security definer set search_path = public as $$
-  select exists (
+  -- only ever answers for the person asking, so it cannot be used to look up other people's friendships
+  select auth.uid() in (a, b) and exists (
     select 1 from friendships
     where status = 'accepted'
       and ((requester = a and addressee = b) or (requester = b and addressee = a))
   );
 $$;
+
+revoke execute on function public.are_friends(uuid, uuid) from public, anon;
+grant execute on function public.are_friends(uuid, uuid) to authenticated;
 
 alter table public.profiles enable row level security;
 alter table public.entries enable row level security;
