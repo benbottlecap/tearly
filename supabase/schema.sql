@@ -99,5 +99,18 @@ create policy "send hug" on public.hugs for insert to authenticated with check (
   and exists (select 1 from public.shares s where s.id = share_id and s.user_id = to_id)
 );
 
+-- fuller reflections written by the "reflect" function: kept so they can be rate-limited per person
+create table public.reflections (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users on delete cascade,
+  text text not null,
+  entry_count int not null default 0,
+  created_at timestamptz not null default now()
+);
+create index reflections_user_at on public.reflections (user_id, created_at desc);
+alter table public.reflections enable row level security;
+create policy "own reflections" on public.reflections for select to authenticated using (user_id = auth.uid());
+create policy "record own reflection" on public.reflections for insert to authenticated with check (user_id = auth.uid());
+
 -- live updates for the Friends tab
 alter publication supabase_realtime add table public.friendships, public.shares, public.hugs;

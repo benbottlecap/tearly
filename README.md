@@ -18,7 +18,11 @@ Without Supabase details in `config.js` it still works, saving entries on the de
 Any static host works (GitHub Pages, Netlify, Vercel, Cloudflare Pages). Publish this folder as it is.
 On an iPhone, open the address in Safari and choose **Share → Add to Home Screen**.
 
+## The fuller reflection
+
+`supabase/functions/reflect` is a Supabase Edge Function that reads the signed-in person's own entries and asks Claude for a reflection.
+Deploy it, then add an Anthropic API key as the function secret `ANTHROPIC_API_KEY`. Each person is limited to five reflections a day.
+
 ## Not built yet
 
 - Push or email notifications. Updates appear live while Tearly is open and on next open otherwise.
-- The fuller "Reflect with me" reading. It needs a small server function holding an AI key; the built-in reflection works without it.
